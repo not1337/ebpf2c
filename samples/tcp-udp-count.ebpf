@@ -1,0 +1,126 @@
+; ------------------------------------------------------------------------
+; Sample: count received udp and tcp packets of a network device
+; ------------------------------------------------------------------------
+;
+; This file is part of the ebpf2c project
+;
+; (C) 2019 Andreas Steinmetz, ast@domdv.de
+; The contents of this file is licensed under the GPL version 2 or, at
+; your choice, any later version of this license.
+;
+;
+; name of bpf program array
+;
+name ebpf_counter
+;
+; define bpf program array as static
+;
+static
+;
+; convert '#define' names to uppercase
+;
+upcase
+;
+; export the number of program array elements
+;
+size
+;
+; this value will be preset from C before the program gets loaded
+;
+export bpfmapfd
+;
+; program code follows
+;
+code
+		;
+		; Save context (skb access)
+		;
+		movd	r6,r1
+		;
+		; Load raw packet size (ethernet header + data)
+		;
+		ldxw	r8,r6,#offsetof(struct __sk_buff,len)
+		;
+		; Fail if ethernet header is (partially) missing
+		;
+		jlt	r8,#sizeof(struct ethhdr),fail
+		;
+		; Load ethernet protocol
+		;
+		ldah	#offsetof(struct ethhdr,h_proto)
+		;
+		; Process only IPv4 and IPv6
+		;
+		jeq	r0,#ETH_P_IP,ipv4
+		jne	r0,#ETH_P_IPV6,fail
+		;
+		; Fail if the packet is too short for IPv6
+		;
+		jlt	r8,#sizeof(struct ethhdr)+sizeof(struct ip6_hdr),fail
+		;
+		; Load IP protocol
+		;
+		ldab	#sizeof(struct ethhdr)+offsetof(struct ip6_hdr,ip6_nxt)
+		;
+		; Continue with common code
+		;
+		ja	common
+		;
+		; Fail if the packet is too short for IPv4
+		;
+ipv4:		jlt	r8,#sizeof(struct ethhdr)+sizeof(struct iphdr),fail
+		;
+		; Load IP protocol
+		;
+		ldab	#sizeof(struct ethhdr)+offsetof(struct iphdr,protocol)
+		;
+		; Count only UDP and TCP
+		;
+common:		jeq	r0,#IPPROTO_TCP,count_tcp
+		jne	r0,#IPPROTO_UDP,fail
+		;
+		; Counter 0 is UDP
+		;
+		movw	r0,#0
+		;
+		; Continue with common code
+		;
+		ja	bpfmapfd
+		;
+		; Counter 1 is TCP
+		;
+count_tcp:	movw	r0,#1
+		;
+		; Load map fd (preset before program load)
+		;
+bpfmapfd:	ldmap	r1,#0
+		;
+		; Save key onto stack
+		;
+		stxw	r10,r0,#-4
+		;
+		; Get pointer to key
+		;
+		movd	r2,r10
+		addd	r2,#-4
+		;
+		; Call map_lookup_elem
+		;
+		fcall	BPF_FUNC_map_lookup_elem
+		;
+		; Fail if key not found
+		;
+		jeq	r0,#0,fail
+		;
+		; Atomically increase counter by one
+		;
+		movd	r1,#1
+		xaddd	r0,r1,#0
+		;
+		; Load zero packet size
+		;
+fail:		movd	r0,#0
+		;
+		; Return zero, i.e. drop packet
+		;
+		exit

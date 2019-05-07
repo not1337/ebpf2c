@@ -1,0 +1,26 @@
+; This file is part of the ebpf2c project
+;
+; (C) 2019 Andreas Steinmetz, ast@domdv.de
+; The contents of this file is licensed under the GPL version 2 or, at
+; your choice, any later version of this license.
+;
+	addd	r0,r1
+	subd	r1,r2
+	muld	r2,r3
+	divd	r3,r4
+	ord	r4,r5
+	andd	r5,r6
+	lshd	r6,r7
+	rshd	r7,r8
+	negd	r8,r9
+	modd	r9,r10
+	xord	r10,r0
+	arshd	r0,r1
+	addw	r0,r1
+	subw	r1,r2
+	mulw	r2,r3
+	divw	r3,r4
+	orw	r4,r5
+	andw	r5,r6
+	lshw	r6,r7
+	rshw	r7,r8

@@ -1,0 +1,149 @@
+; This file is part of the ebpf2c project
+;
+; (C) 2019 Andreas Steinmetz, ast@domdv.de
+; The contents of this file is licensed under the GPL version 2 or, at
+; your choice, any later version of this license.
+;
+;
+; structure name of struct bpf_insn is cmp
+;
+name cmp
+;
+; structure is defined as static (remove 'static' if unwanted)
+;
+static
+;
+; structure is not defined as const (add 'const' if wanted)
+;
+; const
+;
+; conversion if '#define' keys to uppercase is disabled
+;
+; upcase
+;
+; number of elements of struct bpf_insn is defined as cmp_size
+; (remove 'size' if unwanted)
+;
+size
+;
+; add any number of labels here that are exported as a define
+; note that 64 bit immediates are two defines with _l and _h suffix
+;
+export l1
+export l2
+export l3
+export l25
+export l26
+;
+; source code follows after 'code' statement
+; note that you can include code files (no header or code statement)
+; with the 'include <filename>' directive in the code section and,
+; yes, nesting is possible
+;
+code
+	addd	r0,r1
+	subd	r1,r2
+	muld	r2,r3
+	divd	r3,r4
+	ord	r4,r5
+	andd	r5,r6
+	lshd	r6,r7
+	rshd	r7,r8
+	negd	r8,r9
+	modd	r9,r10
+	xord	r10,r0
+	arshd	r0,r1
+	addw	r0,r1
+	subw	r1,r2
+	mulw	r2,r3
+	divw	r3,r4
+	orw	r4,r5
+	andw	r5,r6
+	lshw	r6,r7
+	rshw	r7,r8
+	negw	r8,r9
+	modw	r9,r10
+	xorw	r10,r0
+	arshw	r0,r1
+	addd	r0,#1
+	subd	r1,#2
+	muld	r2,#3
+	divd	r3,#4
+	ord	r4,#5
+	andd	r5,#6
+	lshd	r6,#7
+	rshd	r7,#8
+	negd	r8,#9
+	modd	r9,#10
+	xord	r10,#11
+	arshd	r0,#12
+	addw	r0,#1
+	subw	r1,#2
+	mulw	r2,#3
+	divw	r3,#4
+	orw	r4,#5
+	andw	r5,#6
+	lshw	r6,#7
+	rshw	r7,#8
+	negw	r8,#9
+	modw	r9,#10
+	xorw	r10,#11
+	arshw	r0,#12
+	movd	r1,r2
+	movw	r3,r4
+	movd	r5,#12
+	movw	r6,#13
+	ldab	#14
+	ldah	#15
+	ldaw	#16
+	ldad	#17
+	ldib	r7,#18
+	ldih	r8,#19
+	ldiw	r9,#20
+	ldid	r10,#21
+	ldxb	r0,r1,#22
+	ldxh	r2,r3,#23
+	ldxw	r4,r5,#24
+	ldxd	r6,r7,#25
+	stxb	r0,r1,#26
+	stxh	r2,r3,#27
+	stxw	r4,r5,#28
+	stxd	r6,r7,#29
+	xaddb	r0,r1,#30
+	xaddh	r2,r3,#31
+	xaddw	r4,r5,#32
+	xaddd	r6,r7,#33
+	stib	r0,34,#35
+	stih	r1,36,#37
+	stiw	r2,38,#39
+	stid	r3,40,#41
+	jeq	r0,r1,l1
+l1:	jgt	r1,r2,l2
+l2:	jge	r2,r3,l3
+l3:	jset	r3,r4,l4
+l4:	jne	r4,r5,l5
+l5:	jlt	r5,r6,l6
+l6:	jle	r6,r7,l7
+l7:	jsgt	r7,r8,l8
+l8:	jsge	r8,r9,l9
+l9:	jslt	r9,r10,l10
+l10:	jsle	r10,r0,l11
+l11:	jeq	r0,#1,l12
+l12:	jgt	r1,#2,l13
+l13:	jge	r2,#3,l14
+l14:	jset	r3,#4,l15
+l15:	jne	r4,#5,l16
+l16:	jlt	r5,#6,l17
+l17:	jle	r6,#7,l18
+l18:	jsgt	r7,#8,l19
+l19:	jsge	r8,#9,l20
+l20:	jslt	r9,#10,l21
+l21:	jsle	r10,#11,l22
+l22:	ja	l23
+l23:	lcall	l24
+l24:	fcall	99
+	hxle	r2,#16
+	hxbe	r3,#32
+l25:	ldi64	r4,#69
+l26:	ldmap	r5,#71
+	exit

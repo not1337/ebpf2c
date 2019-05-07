@@ -1,0 +1,67 @@
+; ------------------------------------------------------------------------
+; Sample: pass only udp packets within a certain port range to userspace
+; ------------------------------------------------------------------------
+;
+; This file is part of the ebpf2c project
+;
+; (C) 2019 Andreas Steinmetz, ast@domdv.de
+; The contents of this file is licensed under the GPL version 2 or, at
+; your choice, any later version of this license.
+;
+;
+; name of bpf program array
+;
+name bpf_udp_sport
+;
+; define bpf program array as static
+;
+static
+;
+; convert '#define' names to uppercase
+;
+upcase
+;
+; export the number of program array elements
+;
+size
+;
+; these values will be preset from C before the program gets loaded
+;
+export bpf_sport_low
+export bpf_sport_high
+;
+; program code follows
+;
+code
+		;
+		; Save context (skb access)
+		;
+		movd	r6,r1
+		;
+		; Load source port form udp header
+		;
+		ldah	#0
+		;
+		; Fail if port is below minimum port number
+		;
+bpf_sport_low:	jlt	r0,#0,fail
+		;
+		; Fail if port is above maximum port number
+		;
+bpf_sport_high:	jge	r0,#0,fail
+		;
+		; Load udp packet size (udp header + data)
+		;
+		ldxw	r0,r6,#offsetof(struct __sk_buff,len)
+		;
+		; Pass packet to userspace
+		;
+		exit
+		;
+		; Load zero packet size
+		;
+fail:		movw	r0,#0
+		;
+		; drop packet
+		;
+		exit
