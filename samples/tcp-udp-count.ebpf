@@ -29,8 +29,14 @@ size
 ;
 export bpfmapfd
 ;
-; program code follows
+; definitions and program code follow
 ;
+preamble
+#define ETPROTO	offsetof(struct ethhdr,h_proto)
+#define V6MIN	sizeof(struct ethhdr)+sizeof(struct ip6_hdr)
+#define V6PROTO	sizeof(struct ethhdr)+offsetof(struct ip6_hdr,ip6_nxt)
+#define V4MIN	sizeof(struct ethhdr)+sizeof(struct iphdr)
+#define V4PROTO	sizeof(struct ethhdr)+offsetof(struct iphdr,protocol)
 code
 		;
 		; Save context (skb access)
@@ -47,7 +53,7 @@ code
 		;
 		; Load ethernet protocol
 		;
-		ldah	#offsetof(struct ethhdr,h_proto)
+		ldah	#ETPROTO
 		;
 		; Process only IPv4 and IPv6
 		;
@@ -56,11 +62,11 @@ code
 		;
 		; Fail if the packet is too short for IPv6
 		;
-		jlt	r8,#sizeof(struct ethhdr)+sizeof(struct ip6_hdr),fail
+		jlt	r8,#V6MIN,fail
 		;
 		; Load IP protocol
 		;
-		ldab	#sizeof(struct ethhdr)+offsetof(struct ip6_hdr,ip6_nxt)
+		ldab	#V6PROTO
 		;
 		; Continue with common code
 		;
@@ -68,11 +74,11 @@ code
 		;
 		; Fail if the packet is too short for IPv4
 		;
-ipv4:		jlt	r8,#sizeof(struct ethhdr)+sizeof(struct iphdr),fail
+ipv4:		jlt	r8,#V4MIN,fail
 		;
 		; Load IP protocol
 		;
-		ldab	#sizeof(struct ethhdr)+offsetof(struct iphdr,protocol)
+		ldab	#V4PROTO
 		;
 		; Count only UDP and TCP
 		;

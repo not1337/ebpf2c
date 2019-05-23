@@ -23,6 +23,7 @@ enum
 	e_static,
 	e_const,
 	e_upcase,
+	e_preamble,
 	e_code,
 	e_name,
 	e_export,
@@ -44,6 +45,7 @@ static struct
 	[e_static]={"static",0},
 	[e_const]={"const",0},
 	[e_upcase]={"upcase",0},
+	[e_preamble]={"preamble",0},
 	[e_code]={"code",0},
 	[e_name]={"name",1},
 	[e_export]={"export",2},
@@ -620,8 +622,11 @@ static int fileworker(char *in,char *out)
 	int n=0;
 	int idx;
 	int num;
+	int len=0;
+	int max=0;
 	FILE *fp;
 	char *ptr;
+	char *preamble=NULL;
 	char line[1024];
 
 	if(!(fp=fopen(in,"re")))
@@ -649,6 +654,15 @@ static int fileworker(char *in,char *out)
 				exp[nexp++].dstidx=0;
 				break;
 
+			case e_preamble:
+				if(!hdr[e_name].string)
+				{
+					fprintf(stderr,"name not defined "
+						"line %d\n",n);
+					goto err2;
+				}
+				goto preamb;
+
 			case e_code:
 				if(!hdr[e_name].string)
 				{
@@ -663,6 +677,30 @@ static int fileworker(char *in,char *out)
 		case -1:goto err2;
 		}
 
+	}
+
+	fprintf(stderr,"unexpected eof line %d\n",n);
+	goto err2;
+
+preamb:	while(fgets(line,sizeof(line),fp))
+	{
+		n++;
+		if(!strncmp(line,"code",4))
+			if(!line[4]||line[4]=='\r'||line[4]=='\n')
+				goto code;
+		idx=strlen(line);
+		while(len+idx+1>max)
+		{
+			if(!(preamble=realloc(preamble,max+8192)))
+			{
+				fprintf(stderr,"out of memory %s line "
+					"%d\n",in,num);
+				goto err2;
+			}
+			max+=8192;
+		}
+		strcpy(preamble+len,line);
+		len+=idx;
 	}
 
 	fprintf(stderr,"unexpected eof line %d\n",n);
@@ -703,6 +741,12 @@ code:	while(fgets(line,sizeof(line),fp))
 	{
 		fprintf(stderr,"cannot open %s\n",out);
 		goto err1;
+	}
+
+	if(len)
+	{
+		fprintf(fp,"%s\n",preamble);
+		free(preamble);
 	}
 
 	fprintf(fp,"%s%sstruct bpf_insn %s[]={\n",
