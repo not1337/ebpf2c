@@ -37,9 +37,9 @@ Hints:
 1. You do have 11 registers, named r0 to r10 (fp is an alias for r10).
 r10 is the frame pointer, a stack of 512 bytes can be used.
 
-2. Preserved registers are r6 to r10 and, to an extend, r0. r1 to r5
-are so volatile that the in kernel verifier loses track after every
-branching so these are not of any real use.
+2. Preserved registers are r6 to r10. r1 to r5 are not preserved over
+helper calls (return value in r0). This doesn't matter as long as
+there is no implicit helper call that suddenly clobbers the registers.
 
 3. A socket filter program gets a context on start in r1 that is to
 be saved in r6. You need this context to access a dummy skb structure of
@@ -71,11 +71,11 @@ Opcode Syntax:
 	by a colon character. A line containing a label target must contain
 	an opcode.
 
-	Packet Data:
-	------------
+	Packet Data (implicit helper call, includes beXXtoh):
+	-----------------------------------------------------
 
-	ldaX #imm32			X=b|h|w|d    r0=*(packet+imm32)
-	ldiX reg1,#imm32		X=b|h|w|d    r0=*(packet+reg1+imm32)
+	ldaX #imm32			X=b|h|w      r0=*(packet+imm32)
+	ldiX reg1,#imm32		X=b|h|w      r0=*(packet+reg1+imm32)
 
 	Memory:
 	-------
@@ -100,8 +100,8 @@ Opcode Syntax:
 	opX reg1,reg2			X=w|d	     reg1=reg1 op reg2
 	opX reg2,#imm32			X=w|d	     reg1=reg1 op imm32
 
-	Endian:
-	-------
+	Endian (imm can be 16,32 or 64):
+	--------------------------------
 
 	hxbe reg1,#imm		convert imm bits of reg1 to/from big endian
 	hxle reg1,#imm		convert imm bits of reg1 to/from little endian
@@ -118,7 +118,7 @@ Opcode Syntax:
 
 	ja    label16			goto label16
 	lcall label32			call label32
-	fcall kernel-helper		call kernell-helper
+	fcall kernel-helper		call kernel-helper
 	exit				return
 
 	Other:
