@@ -66,11 +66,9 @@ include test3.ebpf
 	ldab	#14
 	ldah	#15
 	ldaw	#16
-	ldad	#17
 	ldib	r7,#18
 	ldih	r8,#19
 	ldiw	r9,#20
-	ldid	r10,#21
 	ldxb	r0,r1,#22
 	ldxh	r2,r3,#23
 	ldxw	r4,r5,#24

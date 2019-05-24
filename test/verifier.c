@@ -14,12 +14,12 @@
 #include "reference.h"
 #include "test.h"
 
-#if cmp_size != 108
+#if cmp_size != 106
 #error "unexpected array size"
 #endif
 
-#if l1!=77 || l2!=78 || l3!=79 || l25_l!=103 || l25_h!=104 || l26_l!=105 || \
-	l26_h!=106
+#if l1!=75 || l2!=76 || l3!=77 || l25_l!=101 || l25_h!=102 || l26_l!=103 || \
+	l26_h!=104
 #error "missing or invalid exports"
 #endif
 

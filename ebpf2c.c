@@ -66,8 +66,8 @@ static const struct cvt
 	int emit;
 } cvt[]=
 {
-	{"lda",  15,BPF_LD|BPF_ABS,           1,0,1,0,1,0,0},
-	{"ldi",  15,BPF_LD|BPF_IND,           2,0,2,0,1,1,3},
+	{"lda",  7, BPF_LD|BPF_ABS,           1,0,1,0,1,0,0},
+	{"ldi",  7, BPF_LD|BPF_IND,           2,0,2,0,1,1,3},
 	{"ldx",  15,BPF_LDX|BPF_MEM,          3,0,3,0,1,2,4},
 	{"stx",  15,BPF_STX|BPF_MEM,          3,0,3,0,1,2,4},
 	{"sti",  15,BPF_ST|BPF_MEM,           3,0,3,0,1,1,5},
@@ -321,6 +321,18 @@ static int preprocess(int n,int *idx)
 
 	switch(cvt[i].sizes)
 	{
+	case 7:	switch(prg[n].size)
+		{
+		case 1:	code|=BPF_B;
+			break;
+		case 2:	code|=BPF_H;
+			break;
+		case 4:	code|=BPF_W;
+			break;
+		default:return -1;
+		}
+		break;
+
 	case 12:
 		if(!prg[n].size||(prg[n].size&3))return -1;
 		if(prg[n].size&4)code|=BPF_ALU;
