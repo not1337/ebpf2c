@@ -51,6 +51,11 @@ using the lda and ldi instructions.
 
 4. No loops, don't try. You won't get past the in kernel verifier.
 
+5. Omit the use of lda and ldi where possible. Not only are these
+implicit helper function calls instead of simple instructions, the
+kernel imposes further restrictions for programs that do contain
+any of these instructions.
+
 Opcode Syntax:
 ==============
 ```
