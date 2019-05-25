@@ -78,7 +78,24 @@ when used with conditional branches. The workaround is to load
 a 32 bit immediate into a register with a 32 bit instruction.
 The register gets zero extended to 64 bit as expected. Then
 use the register instead of the direct immediate value for the
-conditional branch instruction.
+conditional branch instruction. Example:
+```
+
+	movw	r0,#0x80000000
+	jeq	r0,#0x80000000,target
+
+	branch will NOT be taken, as the jeq immediate gets sign extended,
+	whereas r0 gets zero extended as expected
+
+	movw	r0,#0x80000000
+	movw	r1,#0x80000000
+	jeq	r0,r1,target
+
+	branch will be taken, as r0 and r1 get zero extended as expected
+
+```
+
+
 
 Opcode Syntax:
 ==============
