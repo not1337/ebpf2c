@@ -40,6 +40,8 @@ r10 is the frame pointer, a stack of 512 bytes can be used.
 2. Preserved registers are r6 to r10. r1 to r5 are not preserved over
 helper calls (return value in r0). This doesn't matter as long as
 there is no implicit helper call that suddenly clobbers the registers.
+Note that r1 to r5 correspond to helper call arguments from left to
+right.
 
 3. A socket filter program gets a context on start in r1 that is to
 be saved in r6. You need this context to access a dummy skb structure of
