@@ -56,6 +56,21 @@ implicit helper function calls instead of simple instructions, the
 kernel imposes further restrictions for programs that do contain
 any of these instructions.
 
+6. lda and ldi are the only instructions available to
+access packet data for eBPF programs of type BPF\_PROG\_TYPE\_SOCKET\_FILTER,
+as acccess to "data" and "data\_end" of "struct \_\_sk\_buff" is
+prohibited by the kernel for this type of program.  This in effect means
+that for BPF\_PROG\_TYPE\_SOCKET\_FILTER programs
+r1 to r5 are extremely volatile and nearly unusable. Instead of using
+lda and ldi multiple times it may be more effective to use
+bpf\_skb\_load\_bytes to copy a range of bytes onto the stack and
+then process the copied data due to the overhead involved when using
+lda and ldi.
+
+7. The sub instruction can't be used for the frame pointer or any
+register based on the frame pointer. Use the add instruction with
+a negative value instead.
+
 Opcode Syntax:
 ==============
 ```
@@ -100,13 +115,14 @@ Opcode Syntax:
 	ALU:
 	----
 
-	op=add|sub|mul|div|or|and|lsh|rsh|neg|mod|arsh
+	op=add|sub|mul|div|or|and|lsh|rsh|mod|arsh
 
 	opX reg1,reg2			X=w|d	     reg1=reg1 op reg2
 	opX reg2,#imm32			X=w|d	     reg1=reg1 op imm32
+	negX reg1			X=w|d	     reg1=-reg1
 
-	Endian (imm can be 16,32 or 64):
-	--------------------------------
+	Endian (imm can be 16, 32 or 64):
+	---------------------------------
 
 	hxbe reg1,#imm		convert imm bits of reg1 to/from big endian
 	hxle reg1,#imm		convert imm bits of reg1 to/from little endian
