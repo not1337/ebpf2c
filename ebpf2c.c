@@ -81,7 +81,7 @@ static const struct cvt
 	{"and",  12,BPF_AND,                  2,1,2,0,1,2,6},
 	{"lsh",  12,BPF_LSH,                  2,1,2,0,1,2,6},
 	{"rsh",  12,BPF_RSH,                  2,1,2,0,1,2,6},
-	{"neg",  12,BPF_NEG,                  2,1,2,0,1,2,6},
+	{"neg",  12,BPF_NEG,                  1,0,0,0,1,1,6},
 	{"mod",  12,BPF_MOD,                  2,1,2,0,1,2,6},
 	{"xor",  12,BPF_XOR,                  2,1,2,0,1,2,6},
 	{"arsh", 12,BPF_ARSH,                 2,1,2,0,1,2,6},

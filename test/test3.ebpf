@@ -12,7 +12,6 @@
 	andd	r5,r6
 	lshd	r6,r7
 	rshd	r7,r8
-	negd	r8,r9
 	modd	r9,r10
 	xord	r10,r0
 	arshd	r0,r1

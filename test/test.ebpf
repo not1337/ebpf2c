@@ -49,7 +49,6 @@ code
 	andd	r5,r6
 	lshd	r6,r7
 	rshd	r7,r8
-	negd	r8,r9
 	modd	r9,r10
 	xord	r10,r0
 	arshd	r0,r1
@@ -61,7 +60,6 @@ code
 	andw	r5,r6
 	lshw	r6,r7
 	rshw	r7,r8
-	negw	r8,r9
 	modw	r9,r10
 	xorw	r10,r0
 	arshw	r0,r1
@@ -73,7 +71,7 @@ code
 	andd	r5,#6
 	lshd	r6,#7
 	rshd	r7,#8
-	negd	r8,#9
+	negd	r8
 	modd	r9,#10
 	xord	r10,#11
 	arshd	r0,#12
@@ -85,7 +83,7 @@ code
 	andw	r5,#6
 	lshw	r6,#7
 	rshw	r7,#8
-	negw	r8,#9
+	negw	r8
 	modw	r9,#10
 	xorw	r10,#11
 	arshw	r0,#12

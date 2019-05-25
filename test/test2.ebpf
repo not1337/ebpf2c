@@ -31,7 +31,6 @@ export l26
 ;
 code
 include test3.ebpf
-	negw	r8,r9
 	modw	r9,r10
 	xorw	r10,r0
 	arshw	r0,r1
@@ -43,7 +42,7 @@ include test3.ebpf
 	andd	r5,#6
 	lshd	r6,#7
 	rshd	r7,#8
-	negd	r8,#9
+	negd	r8
 	modd	r9,#10
 	xord	r10,#11
 	arshd	r0,#12
@@ -55,7 +54,7 @@ include test3.ebpf
 	andw	r5,#6
 	lshw	r6,#7
 	rshw	r7,#8
-	negw	r8,#9
+	negw	r8
 	modw	r9,#10
 	xorw	r10,#11
 	arshw	r0,#12
