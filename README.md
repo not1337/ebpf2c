@@ -73,6 +73,13 @@ lda and ldi.
 register based on the frame pointer. Use the add instruction with
 a negative value instead.
 
+8. Immediate values are 32 bit. Unfortunately they get sign extended
+when used with conditional branches. The workaround is to load
+a 32 bit immediate into a register with a 32 bit instruction.
+The register gets zero extended to 64 bit as expected. Then
+use the register instead of the direct immediate value for the
+conditional branch instruction.
+
 Opcode Syntax:
 ==============
 ```
