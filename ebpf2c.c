@@ -81,7 +81,7 @@ static const struct cvt
 	{"and",  12,BPF_AND,                  2,1,2,0,1,2,6},
 	{"lsh",  12,BPF_LSH,                  2,1,2,0,1,2,6},
 	{"rsh",  12,BPF_RSH,                  2,1,2,0,1,2,6},
-	{"neg",  12,BPF_NEG,                  1,0,0,0,1,1,6},
+	{"neg",  12,BPF_NEG|BPF_K,            1,2,0,0,1,1,6},
 	{"mod",  12,BPF_MOD,                  2,1,2,0,1,2,6},
 	{"xor",  12,BPF_XOR,                  2,1,2,0,1,2,6},
 	{"arsh", 12,BPF_ARSH,                 2,1,2,0,1,2,6},
@@ -337,8 +337,11 @@ static int preprocess(int n,int *idx)
 		if(!prg[n].size||(prg[n].size&3))return -1;
 		if(prg[n].size&4)code|=BPF_ALU;
 		else code|=BPF_ALU64;
-		if(prg[n].immediate)code|=BPF_K;
-		else code|=BPF_X;
+		if(cvt[i].xk!=2)
+		{
+			if(prg[n].immediate)code|=BPF_K;
+			else code|=BPF_X;
+		}
 		break;
 
 	case 15:switch(prg[n].size)
@@ -359,16 +362,22 @@ static int preprocess(int n,int *idx)
 		break;
 	}
 
-	if(cvt[i].xk)
+	switch(cvt[i].xk)
 	{
-		if(prg[n].immediate)
+	case 2:	prg[n].reg1=0;
+		break;
+
+	case 1: if(prg[n].immediate)
 		{
 			if(cvt[i].immpos!=prg[n].immediate)return -1;
 			code|=BPF_K;
 		}
 		else code|=BPF_X;
+		break;
+
+	case 0:	if(cvt[i].immpos!=prg[n].immediate)return -1;
+		break;
 	}
-	else if(cvt[i].immpos!=prg[n].immediate)return -1;
 
 	switch(cvt[i].regs)
 	{
