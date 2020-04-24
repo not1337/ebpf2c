@@ -50,6 +50,8 @@ the packet length (see linux/bpf.h for details). You can access
 this data with e.g. "ldxw r0,r6,#offsetof(struct \_\_sk\_buff,len)".
 And, well, yes, you need the context in r6 to access the packet data
 using the lda and ldi instructions.
+Note that for XDP programs the stucture passed via r1 is not
+"struct \_\_sk\_buff" but "struct xdp\_md" instead.
 
 4. No loops, don't try. You won't get past the in kernel verifier.
 
