@@ -62,7 +62,7 @@ any of these instructions.
 
 6. lda and ldi are the only instructions available to
 access packet data for eBPF programs of type BPF\_PROG\_TYPE\_SOCKET\_FILTER,
-as acccess to "data" and "data\_end" of "struct \_\_sk\_buff" is
+as access to "data" and "data\_end" of "struct \_\_sk\_buff" is
 prohibited by the kernel for this type of program.  This in effect means
 that for BPF\_PROG\_TYPE\_SOCKET\_FILTER programs
 r1 to r5 are extremely volatile and nearly unusable. Instead of using
